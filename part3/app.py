@@ -1,18 +1,32 @@
 #!/usr/bin/env python3
 """Part 2 starter CLI (students complete manual substring search + highlighting)."""
 from typing import List, Dict, Tuple
-from .constants import BANNER, HELP
-from .sonnets import SONNETS
+from constants import BANNER, HELP
+from sonnets import SONNETS
 
 def find_spans(text: str, pattern: str):
     """Return [(start, end), ...] for all (possibly overlapping) matches.
     Inputs should already be lowercased by the caller."""
 
     spans = []
+    if not text or not pattern or len(pattern) > len(text):
+        return spans
+
+    a,b = len(text), len(pattern)
+    for i in range(a - b + 1):
+        match = True
+        for j in range(b):
+            if text[i + j] == pattern[j]:
+                continue
+            else:
+                match = False
+                break
+        if match:
+            spans += [(i,i+b)]
+    return spans
 
     # ToDo 1: Copy your solution from the last exercise
 
-    return spans
 
 
 def ansi_highlight(text: str, spans):
@@ -72,15 +86,41 @@ def print_results(query: str, results, highlight: bool):
             print("  " + line_out)
 
 def combine_results(result1, result2):
+    result1["title_spans"] = list(result1["title_spans"]) + list(result2["title_spans"]) #concatenates matches of result1 and matches of result2 in title
+    lines = result1["line_matches"] #list of line matches found in result1
+
+    for lm2 in result2["line_matches"]:  #loop goes through every line match in result2
+        ln = lm2["line_no"]  #ln = line number , check if same line already in result1
+        i = 0  #starts at 0 -> go through list "lines"
+        index = -1  #stores position where same line number in result1 -> not found yet
+        while i < len(lines):  #looks at lines in result1 if line number same as ln
+            if lines[i]["line_no"] == ln:  #if we found same line number as in ln
+                index = i  #remembers position where we found the line
+                break  #don't need to look anymore
+            i += 1  #moves to next line in the list
+
+        if index != -1:
+            lines["spans"] = #lines[]?
+        else:
+
+    """
+    total = len(result1["title_spans"])
+    i = 0
+    while i < len(lines):
+        total += len(lines[i]["spans"])
+        i += 1
+    result1["matches"] = total
+    """
+    combined = result1
+    return combined
+
     # ToDo 3)
     #  Merge the two search results:
     #         - the number of matches,
     #         - the spans in the title and
     #         - the spans found in the individual lines
     #  Returned the combined search result
-    combined = result1
 
-    return combined
 
 
 def main() -> None:
@@ -119,7 +159,7 @@ def main() -> None:
         combined_results = []
 
         #  ToDo 2) Split the raw input string into words using a built-in method of string
-        words = raw #  ... your code here ...
+        words = raw.split() #  ... your code here ...
 
         for word in words:
             # Searching for the word in all sonnets
