@@ -100,17 +100,22 @@ def combine_results(result1, result2):
             i += 1  #moves to next line in the list
 
         if index != -1:
-            lines["spans"] = #lines[]?
+            lines[index]["spans"] = list(lines[index]["spans"]) + list(lm2["spans"])
         else:
+            lines.append({
+                "line_no": ln,
+                "text": lm2["text"],
+                "spans": list(lm2["spans"]),
+            })
 
-    """
+
     total = len(result1["title_spans"])
     i = 0
     while i < len(lines):
         total += len(lines[i]["spans"])
         i += 1
     result1["matches"] = total
-    """
+    
     combined = result1
     return combined
 
